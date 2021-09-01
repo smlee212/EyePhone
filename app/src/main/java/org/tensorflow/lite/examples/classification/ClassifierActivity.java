@@ -22,6 +22,7 @@ import android.graphics.Matrix;
 import android.graphics.Typeface;
 import android.media.ImageReader.OnImageAvailableListener;
 import android.os.SystemClock;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.util.Size;
 import android.util.TypedValue;
@@ -236,6 +237,22 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
               // Yolo 추론 : results에 감지된 객체들의 정보가 저장됨 (getLocation으로 Box 정보 불러옴)
               final List<Classifier_Yolo.Recognition> results = detector.recognizeImage(croppedBitmap);
               Log.e("CHECK", "run: " + results.size());
+
+              // tts 음성 출력 Demo
+              int objCnt = results.size();
+              if(objCnt >= 1) {
+                tts.setPitch(1.5f);
+                tts.setSpeechRate(1.5f);
+                // editText에 있는 문장을 읽는다.
+                tts.speak(""+objCnt, TextToSpeech.QUEUE_ADD, null);
+              }
+              /** TTS.setPitch(float pitch) : 음성 톤 높이 설정 (
+               *  TTS.setSpeechRate(float speechRate) : 읽는 속도 설정
+               *
+               *  TextToSpeech.QUEUE_FLUSH : 진행중인 음성 출력을 끊고 이번 TTS의 음성 출력을 한다.
+               *  TextToSpeech.QUEUE_ADD   : 진행중인 음성 출력이 끝난 후에 이번 TTS의 음성 출력을 진행한다.
+               */
+
 
               // Midas 추론 : img_array에 결과 이미지 저장됨
               float[] img_array = classifier.recognizeImage(rgbFrameBitmap, sensorOrientation);

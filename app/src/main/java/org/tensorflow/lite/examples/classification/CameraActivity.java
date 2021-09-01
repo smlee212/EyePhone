@@ -67,6 +67,11 @@ import java.util.List;
 import java.io.IOException;
 import java.util.ArrayList;
 
+// tts
+import android.speech.tts.TextToSpeech;
+import java.util.Locale;
+import static android.speech.tts.TextToSpeech.ERROR;
+
 import org.tensorflow.lite.examples.classification.customview.OverlayView;
 import org.tensorflow.lite.examples.classification.env.ImageUtils;
 import org.tensorflow.lite.examples.classification.env.Logger;
@@ -135,6 +140,9 @@ public abstract class CameraActivity extends AppCompatActivity
   int currentModel = -1;
   int currentNumThreads = -1;
 
+  /** tts 변수 생성 **/
+  protected TextToSpeech tts;
+
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
     LOGGER.d("onCreate " + this);
@@ -148,6 +156,20 @@ public abstract class CameraActivity extends AppCompatActivity
     } else {
       requestPermission();
     }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // TTS를 생성하고 OnInitListener로 초기화 한다.
+    tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+      @Override
+      public void onInit(int status) {
+        if(status != ERROR) {
+          // 언어를 선택한다.
+          tts.setLanguage(Locale.KOREAN);
+        }
+      }
+    });
+
+    ///////////////////////////////////////////////////////////////////////////////
 
     threadsTextView = findViewById(R.id.threads);
     plusImageView = findViewById(R.id.plus);
@@ -457,6 +479,12 @@ public abstract class CameraActivity extends AppCompatActivity
   public synchronized void onDestroy() {
     LOGGER.d("onDestroy " + this);
     super.onDestroy();
+    // TTS 객체가 남아있다면 실행을 중지하고 메모리에서 제거한다.
+    if(tts != null){
+      tts.stop();
+      tts.shutdown();
+      tts = null;
+    }
   }
 
   protected synchronized void runInBackground(final Runnable r) {

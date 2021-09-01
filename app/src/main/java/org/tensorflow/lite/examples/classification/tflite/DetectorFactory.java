@@ -27,36 +27,23 @@ public class DetectorFactory {
                     10,13, 16,30, 33,23, 30,61, 62,45, 59,119, 116,90, 156,198, 373,326
             };
         }
-        else if (modelFilename.equals("yolov5s-fp16.tflite")) {
-            labelFilename = "file:///android_asset/coco.txt";
+        else if(modelFilename.equals("29class_480.tflite")){
+            Log.d("tflite", "modelFilename");
+            labelFilename = "file:///android_asset/29_labels.txt";
             isQuantized = false;
-            inputSize = 320;
-            output_width = new int[]{40, 20, 10};
-            masks = new int[][]{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}};
-            anchors = new int[]{
-                    10,13, 16,30, 33,23, 30,61, 62,45, 59,119, 116,90, 156,198, 373,326
-            };
+            inputSize = 480;
         }
-        else if (modelFilename.equals("yolov5s-int8.tflite")) {
-            labelFilename = "file:///android_asset/coco.txt";
-            isQuantized = true;
-            inputSize = 320;
-            output_width = new int[]{40, 20, 10};
-            masks = new int[][]{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}};
-            anchors = new int[]{
-                    10,13, 16,30, 33,23, 30,61, 62,45, 59,119, 116,90, 156,198, 373,326
-            };
+        else if(modelFilename.equals("29class_640.tflite")){
+            Log.d("tflite", "modelFilename");
+            labelFilename = "file:///android_asset/29_labels.txt";
+            isQuantized = false;
+            inputSize = 640;
         }
         else if(modelFilename.equals("best-fp16.tflite")){
-            Log.d("tflite", "ok");
+            Log.d("tflite", "modelFilename");
             labelFilename = "file:///android_asset/road.txt";
             isQuantized = false;
             inputSize = 480;
-            output_width = new int[]{80, 40, 20};
-            masks = new int[][]{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}};
-            anchors = new int[]{
-                    10,13, 16,30, 33,23, 30,61, 62,45, 59,119, 116,90, 156,198, 373,326
-            };
         }
         return YoloV5Classifier.create(assetManager, modelFilename, labelFilename, isQuantized,
                 inputSize);
