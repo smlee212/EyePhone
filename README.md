@@ -1,21 +1,27 @@
-# MiDaS on Android smartphone by using TensorFlow-lite (TFLite)
+# MiDaS and Yolov5 on Android smartphone by using TensorFlow-lite (TFLite)
 
 
-* Either use Android Studio for compilation.
-
-* Or use ready to install apk-file:
-    * Or use URL: https://i.diawi.com/CVb8a9
-    * Or use QR-code: 
-   
-Scan QR-code or open URL -> Press `Install application` -> Press `Download` and wait for download -> Open -> Install -> Open -> Press: Allow MiDaS to take photo and video from the camera While using the APP
-
-![CVb8a9](https://user-images.githubusercontent.com/4096485/97727213-38552500-1ae1-11eb-8b76-4ea11216f76d.png)
-
-----
-
-To use another model, you should convert it to `model_opt.tflite` and place it to the directory: `models\src\main\assets`
 
 
-----
+### Citation
 
-Original repository: https://github.com/intel-isl/MiDaS
+   - Yolov5 [ https://github.com/zldrobit/yolov5 ]
+
+   - Midas [ https://github.com/intel-isl/MiDaS ]
+```
+@article{Ranftl2020,
+	author    = {Ren\'{e} Ranftl and Katrin Lasinger and David Hafner and Konrad Schindler and Vladlen Koltun},
+	title     = {Towards Robust Monocular Depth Estimation: Mixing Datasets for Zero-shot Cross-dataset Transfer},
+	journal   = {IEEE Transactions on Pattern Analysis and Machine Intelligence (TPAMI)},
+	year      = {2020},
+}
+```
+
+```
+@article{Ranftl2021,
+	author    = {Ren\'{e} Ranftl and Alexey Bochkovskiy and Vladlen Koltun},
+	title     = {Vision Transformers for Dense Prediction},
+	journal   = {ArXiv preprint},
+	year      = {2021},
+}
+```
