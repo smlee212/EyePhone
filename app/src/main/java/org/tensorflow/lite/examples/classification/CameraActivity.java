@@ -72,6 +72,9 @@ import android.speech.tts.TextToSpeech;
 import java.util.Locale;
 import static android.speech.tts.TextToSpeech.ERROR;
 
+// 진동
+import android.os.Vibrator;
+
 import org.tensorflow.lite.examples.classification.customview.OverlayView;
 import org.tensorflow.lite.examples.classification.env.ImageUtils;
 import org.tensorflow.lite.examples.classification.env.Logger;
@@ -143,6 +146,9 @@ public abstract class CameraActivity extends AppCompatActivity
   /** tts 변수 생성 **/
   protected TextToSpeech tts;
 
+  /** 진동 변수 생성 **/
+  protected Vibrator vibrator;
+
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
     LOGGER.d("onCreate " + this);
@@ -168,6 +174,11 @@ public abstract class CameraActivity extends AppCompatActivity
         }
       }
     });
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // 진동 변수 생성
+
+    vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
     ///////////////////////////////////////////////////////////////////////////////
 

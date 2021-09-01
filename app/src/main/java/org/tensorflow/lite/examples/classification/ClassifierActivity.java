@@ -16,12 +16,14 @@
 
 package org.tensorflow.lite.examples.classification;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
 import android.media.ImageReader.OnImageAvailableListener;
 import android.os.SystemClock;
+import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.util.Size;
@@ -245,14 +247,15 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                 tts.setSpeechRate(1.5f);
                 // editText에 있는 문장을 읽는다.
                 tts.speak(""+objCnt, TextToSpeech.QUEUE_ADD, null);
-              }
-              /** TTS.setPitch(float pitch) : 음성 톤 높이 설정 (
-               *  TTS.setSpeechRate(float speechRate) : 읽는 속도 설정
-               *
-               *  TextToSpeech.QUEUE_FLUSH : 진행중인 음성 출력을 끊고 이번 TTS의 음성 출력을 한다.
-               *  TextToSpeech.QUEUE_ADD   : 진행중인 음성 출력이 끝난 후에 이번 TTS의 음성 출력을 진행한다.
-               */
+                /** TTS.setPitch(float pitch) : 음성 톤 높이 설정 (배수 설정)
+                 *  TTS.setSpeechRate(float speechRate) : 읽는 속도 설정 (배수 설정)
+                 *
+                 *  TextToSpeech.QUEUE_FLUSH : 진행중인 음성 출력을 끊고 이번 TTS의 음성 출력을 한다.
+                 *  TextToSpeech.QUEUE_ADD   : 진행중인 음성 출력이 끝난 후에 이번 TTS의 음성 출력을 진행한다. */
 
+                //vibrator.cancel();
+                vibrator.vibrate(500); // 0.5초간 진동
+              }
 
               // Midas 추론 : img_array에 결과 이미지 저장됨
               float[] img_array = classifier.recognizeImage(rgbFrameBitmap, sensorOrientation);
