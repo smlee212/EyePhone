@@ -447,7 +447,7 @@ public abstract class CameraActivity extends AppCompatActivity
         Log.d("valid_objects",""+valid_objects.size());
         for (DetectedObj item : valid_objects)
         {
-          Log.d("check", item.getInfo());
+          item.showInfo();
         }
         valid_objects.clear();
       }

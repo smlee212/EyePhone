@@ -447,8 +447,8 @@ public class YoloV5Classifier implements Classifier_Yolo {
 
                 final float w = out[0][i][2];   // 2 : w
                 final float h = out[0][i][3];   // 3 : h
-                Log.d("YoloV5Classifier",
-                        Float.toString(xPos) + ',' + yPos + ',' + w + ',' + h);
+                //Log.d("YoloV5Classifier",
+                //        Float.toString(xPos) + ',' + yPos + ',' + w + ',' + h);
 
                 final RectF rect =
                         new RectF(

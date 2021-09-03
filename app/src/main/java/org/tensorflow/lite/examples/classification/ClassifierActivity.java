@@ -240,28 +240,9 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
               final List<Classifier_Yolo.Recognition> results = detector.recognizeImage(croppedBitmap);
               Log.e("CHECK", "run: " + results.size());
 
-              // tts 음성 출력 Demo
-              int objCnt = results.size();
-              if(objCnt >= 1) {
-                tts.setPitch(1.5f);
-                tts.setSpeechRate(1.5f);
-                // editText에 있는 문장을 읽는다.
-                tts.speak(""+objCnt, TextToSpeech.QUEUE_ADD, null);
-                /** TTS.setPitch(float pitch) : 음성 톤 높이 설정 (배수 설정)
-                 *  TTS.setSpeechRate(float speechRate) : 읽는 속도 설정 (배수 설정)
-                 *
-                 *  TextToSpeech.QUEUE_FLUSH : 진행중인 음성 출력을 끊고 이번 TTS의 음성 출력을 한다.
-                 *  TextToSpeech.QUEUE_ADD   : 진행중인 음성 출력이 끝난 후에 이번 TTS의 음성 출력을 진행한다. */
-
-                //vibrator.cancel();
-                //vibrator.vibrate(500); // 0.5초간 진동
-              }
-
               // Midas 추론 : img_array에 결과 이미지 저장됨
               float[] img_array = classifier.recognizeImage(rgbFrameBitmap, sensorOrientation);
               //Bitmap bitmap_Midas = GraycaleToBitmap(img_array, imageSizeX, imageSizeY); // bitmap으로 변환 (미완성)
-
-
 
               // 감지된 물체의 Box를 화면에 그림
               cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
@@ -283,34 +264,43 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
 
               // 임시 검출 객체(detectedObj) 리스트.
               ArrayList<DetectedObj> temp_objects = new ArrayList<>();
+              final long currentTime = SystemClock.uptimeMillis();
 
               for (final Classifier_Yolo.Recognition result : results) {
-                // 480, 480 scale좌표를 256, 256으로 변환.
-                int depth_x = (int)((result.getLocation().centerX()/480.0) * 256);
-                int depth_y = (int)((result.getLocation().centerY()/480.0) * 256);
-                float midas_val = img_array[(256 - depth_x - 1) + (256 - depth_y - 1) * 256];
-                float disparity = 0.20f * midas_val - 20.0f;
-                float distance = 119.975f * 1397.f / disparity;//baseline * focal_length / disp
-                float distance_m = distance/1000.f;
-                Log.d("midas", "x, y = ("+depth_x+", "+depth_y+"), val="+midas_val+", dist "+distance_m+"(m)" );
-
-                DetectedObj temp_obj = new DetectedObj(result.getTitle(), 0,
-                        result.getLocation().centerX(),
-                        result.getLocation().centerY(),
-                        distance_m);
-
-                temp_objects.add(temp_obj);
-
                 final RectF location = result.getLocation();
                 if (location != null && result.getConfidence() >= minimumConfidence) {
+                  // 깊이 구하기
+                  // 480, 480 scale좌표를 256, 256으로 변환.
+                  int depth_x = (int)((result.getLocation().centerX()/480.0) * 256);
+                  int depth_y = (int)((result.getLocation().centerY()/480.0) * 256);
+                  float midas_val = img_array[(256 - depth_x - 1) + (256 - depth_y - 1) * 256];
+                  float disparity = 0.20f * midas_val - 20.0f;
+                  float distance = 119.975f * 1397.f / disparity;//baseline * focal_length / disp
+                  float distance_m = distance/1000.f;
+                  Log.d("midas", "x, y = ("+depth_x+", "+depth_y+"), val="+midas_val+", dist "+distance_m+"(m)" );
+
+                  // 사각형 그리기?
                   canvas.drawRect(location, paint);
                   cropToFrameTransform.mapRect(location);
                   result.setLocation(location);
+
                   // 거리 정보 입력.
                   result.setDistance(distance_m);
                   mappedRecognitions.add(result);
+
+                  // 탐지 객체 처리
+                  DetectedObj temp_obj = new DetectedObj(result.getTitle(),
+                          result.getLocation().centerX(),
+                          result.getLocation().centerY(),
+                          distance_m,
+                          currentTime);
+
+                  temp_objects.add(temp_obj);
+
                 }
               }
+
+
 
 //              for (DetectedObj obj: valid_objects)
 //              {
@@ -321,9 +311,8 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
               for (DetectedObj temp : temp_objects)
               {
                 // 매칭되지 않은 새로운 객체를 전역리스트에 추가
-                if (temp.isNewItem())
+                if (temp.getState() == 0)
                 {
-                  //temp.setNewItem(false);
                   valid_objects.add(temp);
                 }
               }
@@ -341,6 +330,29 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
               tracker.trackResults(mappedRecognitions, currTimestamp);
               trackingOverlay.postInvalidate();
               /////////////////////////////////////////////////////////
+
+              /*
+              // tts 음성 출력 Demo
+              int objCnt = results.size();
+              if(objCnt >= 1) {
+                tts.setPitch(1.5f);
+                tts.setSpeechRate(1.5f);
+                // editText에 있는 문장을 읽는다.
+                tts.speak(""+objCnt, TextToSpeech.QUEUE_ADD, null);
+                //vibrator.cancel();
+                //vibrator.vibrate(500); // 0.5초간 진동
+              }
+               */
+
+              /** TTS.setPitch(float pitch) : 음성 톤 높이 설정 (배수 설정)
+               *  TTS.setSpeechRate(float speechRate) : 읽는 속도 설정 (배수 설정)
+               *
+               *  TextToSpeech.QUEUE_FLUSH : 진행중인 음성 출력을 끊고 이번 TTS의 음성 출력을 한다.
+               *  TextToSpeech.QUEUE_ADD   : 진행중인 음성 출력이 끝난 후에 이번 TTS의 음성 출력을 진행한다. */
+
+              /////////////////////////////////////////////////////////
+
+
 
               computingDetection = false;
 
