@@ -21,6 +21,7 @@ public class DetectedObj {
     private boolean newItem = true; // 새롭게 검출된 객체인가 (추적된 객체이면 false가 된다.)
 
     private ArrayList<Float> Time = new ArrayList<>(); // 프레임 간격 시간들 모음
+    //11, 13
     private float totalTime = 0; // 정보 갱신을 위한 총 시간 (임계값보다 클 경우 갱신해주는 용도)
     private float notDetectedTime = 0; // 객체가 연속적으로 검출되지 않은 시간
 
@@ -131,5 +132,9 @@ public class DetectedObj {
 
     public boolean isNewItem() {
         return newItem;
+    }
+
+    public String getInfo(){
+        return "id: "+id+", className: "+className+", pos: ("+xPos+", "+yPos+"), distance: "+depth;
     }
 }

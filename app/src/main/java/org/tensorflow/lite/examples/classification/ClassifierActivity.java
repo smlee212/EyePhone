@@ -254,12 +254,13 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                  *  TextToSpeech.QUEUE_ADD   : 진행중인 음성 출력이 끝난 후에 이번 TTS의 음성 출력을 진행한다. */
 
                 //vibrator.cancel();
-                vibrator.vibrate(500); // 0.5초간 진동
+                //vibrator.vibrate(500); // 0.5초간 진동
               }
 
               // Midas 추론 : img_array에 결과 이미지 저장됨
               float[] img_array = classifier.recognizeImage(rgbFrameBitmap, sensorOrientation);
               //Bitmap bitmap_Midas = GraycaleToBitmap(img_array, imageSizeX, imageSizeY); // bitmap으로 변환 (미완성)
+
 
 
               // 감지된 물체의 Box를 화면에 그림
@@ -268,7 +269,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
               final Paint paint = new Paint();
               paint.setColor(Color.RED);
               paint.setStyle(Paint.Style.STROKE);
-              paint.setStrokeWidth(2.0f);
+              paint.setStrokeWidth(1.0f);
 
               float minimumConfidence = MINIMUM_CONFIDENCE_TF_OD_API;
               switch (MODE) {
@@ -280,17 +281,62 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
               final List<Classifier_Yolo.Recognition> mappedRecognitions =
                       new LinkedList<Classifier_Yolo.Recognition>();
 
-              for (final Classifier_Yolo.Recognition result : results) {
-                final RectF location = result.getLocation();
+              // 임시 검출 객체(detectedObj) 리스트.
+              ArrayList<DetectedObj> temp_objects = new ArrayList<>();
 
+              for (final Classifier_Yolo.Recognition result : results) {
+                // 480, 480 scale좌표를 256, 256으로 변환.
+                int depth_x = (int)((result.getLocation().centerX()/480.0) * 256);
+                int depth_y = (int)((result.getLocation().centerY()/480.0) * 256);
+                float midas_val = img_array[(256 - depth_x - 1) + (256 - depth_y - 1) * 256];
+                float disparity = 0.20f * midas_val - 20.0f;
+                float distance = 119.975f * 1397.f / disparity;//baseline * focal_length / disp
+                float distance_m = distance/1000.f;
+                Log.d("midas", "x, y = ("+depth_x+", "+depth_y+"), val="+midas_val+", dist "+distance_m+"(m)" );
+
+                DetectedObj temp_obj = new DetectedObj(result.getTitle(), 0,
+                        result.getLocation().centerX(),
+                        result.getLocation().centerY(),
+                        distance_m);
+
+                temp_objects.add(temp_obj);
+
+                final RectF location = result.getLocation();
                 if (location != null && result.getConfidence() >= minimumConfidence) {
-                  li.add(result);
                   canvas.drawRect(location, paint);
                   cropToFrameTransform.mapRect(location);
                   result.setLocation(location);
+                  // 거리 정보 입력.
+                  result.setDistance(distance_m);
                   mappedRecognitions.add(result);
                 }
               }
+
+//              for (DetectedObj obj: valid_objects)
+//              {
+//                // 기존 객체와 매칭하는 부분
+//                obj.traceObj(temp_objects);
+//              }
+
+              for (DetectedObj temp : temp_objects)
+              {
+                // 매칭되지 않은 새로운 객체를 전역리스트에 추가
+                if (temp.isNewItem())
+                {
+                  //temp.setNewItem(false);
+                  valid_objects.add(temp);
+                }
+              }
+
+//              for (DetectedObj obj: valid_objects)
+//              {
+                // 시간 지난 obj
+                //if (obj.isNewItem())
+                //{
+//                  valid_objects.remove(obj);
+//                }
+//              }
+
 
               tracker.trackResults(mappedRecognitions, currTimestamp);
               trackingOverlay.postInvalidate();
@@ -304,7 +350,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                   new Runnable() {
                     @Override
                     public void run() {
-                      //showResultsInTexture(img_array, imageSizeX, imageSizeY); // Midas 추론 결과를 화면에 띄움
+                      showResultsInTexture(img_array, imageSizeX, imageSizeY); // Midas 추론 결과를 화면에 띄움
                       showCameraResolution(cropSize + "x" + cropSize);
                       showRotationInfo(String.valueOf(sensorOrientation));
 

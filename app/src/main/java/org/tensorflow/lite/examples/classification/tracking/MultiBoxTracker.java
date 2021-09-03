@@ -75,7 +75,7 @@ public class MultiBoxTracker {
 
     boxPaint.setColor(Color.RED);
     boxPaint.setStyle(Style.STROKE);
-    boxPaint.setStrokeWidth(10.0f);
+    boxPaint.setStrokeWidth(5.0f);
     boxPaint.setStrokeCap(Cap.ROUND);
     boxPaint.setStrokeJoin(Join.ROUND);
     boxPaint.setStrokeMiter(100);
@@ -139,9 +139,11 @@ public class MultiBoxTracker {
 
       getFrameToCanvasMatrix().mapRect(trackedPos);
       boxPaint.setColor(recognition.color);
+      boxPaint.setTextSize(1.f);
 
       float cornerSize = Math.min(trackedPos.width(), trackedPos.height()) / 8.0f;
       canvas.drawRoundRect(trackedPos, cornerSize, cornerSize, boxPaint);
+
 
       final String labelString =
               !TextUtils.isEmpty(recognition.title)
@@ -149,8 +151,11 @@ public class MultiBoxTracker {
                       : String.format("%.2f", (100 * recognition.detectionConfidence));
       //            borderedText.drawText(canvas, trackedPos.left + cornerSize, trackedPos.top,
       // labelString);
+
       borderedText.drawText(
               canvas, trackedPos.left + cornerSize, trackedPos.top, labelString + "%", boxPaint);
+      final String labelDistance = String.format("%.2f(m)", recognition.distance);
+      borderedText.drawText(canvas, trackedPos.left + cornerSize, trackedPos.top+50.f, labelDistance, boxPaint);
     }
   }
 
@@ -189,10 +194,13 @@ public class MultiBoxTracker {
     }
 
     for (final Pair<Float, Recognition> potential : rectsToTrack) {
+      // 화면에 바운딩박스 출력하는 코드
       final TrackedRecognition trackedRecognition = new TrackedRecognition();
       trackedRecognition.detectionConfidence = potential.first;
       trackedRecognition.location = new RectF(potential.second.getLocation());
       trackedRecognition.title = potential.second.getTitle();
+      trackedRecognition.distance = potential.second.getDistance();
+      //trackedRecognition.title = "hello world!";
 //      trackedRecognition.color = COLORS[trackedObjects.size() % COLORS.length];
       trackedRecognition.color = COLORS[potential.second.getDetectedClass() % COLORS.length];
       trackedObjects.add(trackedRecognition);
@@ -206,6 +214,7 @@ public class MultiBoxTracker {
   private static class TrackedRecognition {
     RectF location;
     float detectionConfidence;
+    float distance;
     int color;
     String title;
   }

@@ -42,6 +42,7 @@ public interface Classifier_Yolo {
      * An immutable result returned by a Classifier describing what was recognized.
      */
     public class Recognition {
+        private Float distance;
         /**
          * A unique identifier for what has been recognized. Specific to the class, not the instance of
          * the object.
@@ -80,6 +81,10 @@ public interface Classifier_Yolo {
             this.location = location;
             this.detectedClass = detectedClass;
         }
+
+        public void setDistance(float distance) { this.distance = distance; }
+
+        public float getDistance(){ return distance; }
 
         public String getId() {
             return id;

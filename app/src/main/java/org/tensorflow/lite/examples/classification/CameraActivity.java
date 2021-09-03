@@ -150,7 +150,7 @@ public abstract class CameraActivity extends AppCompatActivity
   /** 진동 변수 생성 **/
   protected Vibrator vibrator;
 
-  ArrayList<Classifier_Yolo.Recognition> li = new ArrayList<>();
+  ArrayList<DetectedObj> valid_objects = new ArrayList<>();
 
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
@@ -442,10 +442,14 @@ public abstract class CameraActivity extends AppCompatActivity
             }
           };
 
-      if(processImage()){
-        Log.d("size",""+li.size());
-
-        li.clear();
+      if(processImage())
+      {
+        Log.d("valid_objects",""+valid_objects.size());
+        for (DetectedObj item : valid_objects)
+        {
+          Log.d("check", item.getInfo());
+        }
+        valid_objects.clear();
       }
       else{
         //Log.d("size",""+li.size());
@@ -714,7 +718,7 @@ public abstract class CameraActivity extends AppCompatActivity
         }
       }
 
-      canvas.drawBitmap(bitmap, null, new RectF(0, 0, canvas_size, 160 + canvas_size), null);
+      canvas.drawBitmap(bitmap, null, new RectF(0, 0+160, canvas_size, 160 + canvas_size), null);
 
       textureView.unlockCanvasAndPost(canvas);
 
