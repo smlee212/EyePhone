@@ -205,6 +205,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
   // 추론 및 알고리즘 동작
   @Override
   protected boolean processImage() {
+    detector.useGpu();
     ++timestamp;
     final long currTimestamp = timestamp;
     trackingOverlay.postInvalidate();
@@ -273,11 +274,51 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                   // 480, 480 scale좌표를 256, 256으로 변환.
                   int depth_x = (int)((result.getLocation().centerX()/480.0) * 256);
                   int depth_y = (int)((result.getLocation().centerY()/480.0) * 256);
-                  float midas_val = img_array[(256 - depth_x - 1) + (256 - depth_y - 1) * 256];
-                  float disparity = 0.20f * midas_val - 20.0f;
-                  float distance = 119.975f * 1397.f / disparity;//baseline * focal_length / disp
+                  // midas 추론값 좌표이용해서 찾아오기
+                  int centerDx = (int)(((result.getLocation().width()/4.f)/480.f) * 256);
+                  int centerDy = (int)(((result.getLocation().height()/4.f)/480.f) * 256);
+                  int[] dx = {0, 0, centerDx, 0, -centerDx}; //중심, 북, 동, 남, 서
+                  int[] dy = {0, -centerDy, 0, centerDy, 0};
+                  //깊이값 단일 추론.
+                  //float midas_val = img_array[(256 - depth_x - 1) + (256 - depth_y - 1) * 256];
+                  //깊이값 다중 추론
+                  float[] midas_val = new float[5];
+                  for (int i = 0; i < 5; i++){
+                    midas_val[i] = img_array[(256 - depth_x - 1 + dx[i]) + (256 - depth_y - 1 + dy[i]) * 256];
+                  }
+                  float min_val = 100000f;
+                  float max_val = -100000f;
+                  int min_idx = -1;
+                  int max_idx = -1;
+                  for (int i = 0; i < 5; i++) {
+                    if (min_val <= midas_val[i]) {
+                       min_val = midas_val[i];
+                       min_idx = i;
+                    }
+                    if (max_val > midas_val[i]) {
+                      max_val = midas_val[i];
+                      max_idx = i;
+                    }
+                  }
+                  Log.d("min_max", "min_idx"+min_idx+", max_idx"+max_idx);
+                  float sum_val = 0;
+                  for (int i = 0; i < 5; i++){
+                    if (i == min_idx || i == max_idx) continue;
+                    sum_val = sum_val+midas_val[i];
+                  }
+                  float avg_val = sum_val/3f;
+
+                  float disparity = 0.20f * avg_val - 20.0f;
+                  float distance;
+                  if (disparity >= 0) {
+                    distance = 119.975f * 1397.f / disparity;//baseline * focal_length / disp;
+                  }
+                  else{
+                    distance = 168000f;   //최대값.
+                  }
+
                   float distance_m = distance/1000.f;
-                  //Log.d("midas", "x, y = ("+depth_x+", "+depth_y+"), val="+midas_val+", dist "+distance_m+"(m)" );
+                  Log.d("midas", "x, y = ("+depth_x+", "+depth_y+"), val="+avg_val+", dist "+distance_m+"(m)" );
 
                   // 사각형 그리기?
                   canvas.drawRect(location, paint);
@@ -360,7 +401,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                   new Runnable() {
                     @Override
                     public void run() {
-                      showResultsInTexture(img_array, imageSizeX, imageSizeY); // Midas 추론 결과를 화면에 띄움
+                      //showResultsInTexture(img_array, imageSizeX, imageSizeY); // Midas 추론 결과를 화면에 띄움
                       showCameraResolution(cropSize + "x" + cropSize);
                       showRotationInfo(String.valueOf(sensorOrientation));
 

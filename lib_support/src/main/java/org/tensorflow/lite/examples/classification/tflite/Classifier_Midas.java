@@ -65,8 +65,9 @@ public abstract class Classifier_Midas {
   /** The runtime device type used for executing classification. */
   public enum Device {
     CPU,
-    NNAPI,
-    GPU
+    GPU,
+    NNAPI
+
   }
 
   /** Number of results to show in the UI. */

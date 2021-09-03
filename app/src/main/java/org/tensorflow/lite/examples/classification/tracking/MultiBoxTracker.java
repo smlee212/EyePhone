@@ -15,10 +15,16 @@ limitations under the License.
 
 package org.tensorflow.lite.examples.classification.tracking;
 
+import static java.lang.Math.PI;
+import static java.lang.Math.atan2;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Path;
 import android.graphics.Paint;
 import android.graphics.Paint.Cap;
 import android.graphics.Paint.Join;
@@ -139,10 +145,12 @@ public class MultiBoxTracker {
 
       getFrameToCanvasMatrix().mapRect(trackedPos);
       boxPaint.setColor(recognition.color);
+      boxPaint.setStrokeWidth(5.f);
       boxPaint.setTextSize(1.f);
 
-      float cornerSize = Math.min(trackedPos.width(), trackedPos.height()) / 8.0f;
+      float cornerSize = Math.min(trackedPos.width(), trackedPos.height()) / 25.0f;
       canvas.drawRoundRect(trackedPos, cornerSize, cornerSize, boxPaint);
+
 
 
       final String labelString =
@@ -156,6 +164,10 @@ public class MultiBoxTracker {
               canvas, trackedPos.left + cornerSize, trackedPos.top, labelString + "%", boxPaint);
       final String labelDistance = String.format("%.2f(m)", recognition.distance);
       borderedText.drawText(canvas, trackedPos.left + cornerSize, trackedPos.top+50.f, labelDistance, boxPaint);
+      // 화살표그리기
+      boxPaint.setStrokeWidth(8.f);
+      drawArrow(boxPaint, canvas, trackedPos.centerX(), trackedPos.centerY(),
+              trackedPos.centerX()+200, trackedPos.centerY()+ 150);
     }
   }
 
@@ -218,4 +230,35 @@ public class MultiBoxTracker {
     int color;
     String title;
   }
+
+
+  private void drawArrow(Paint paint, Canvas canvas, float from_x, float from_y, float to_x, float to_y)
+  {
+    float angle, anglerad, radius, lineangle;
+
+    //values to change for other appearance *CHANGE THESE FOR OTHER SIZE ARROWHEADS*
+    radius=30f;
+    angle=35f;
+
+    //some angle calculations
+    anglerad = (float) (PI*angle/180.0f);
+    lineangle = (float) (atan2(to_y-from_y,to_x-from_x));
+
+    //tha line
+    canvas.drawLine(from_x,from_y,to_x,to_y,paint);
+
+    //tha triangle
+    Path path = new Path();
+    path.setFillType(Path.FillType.EVEN_ODD);
+    path.moveTo(to_x, to_y);
+    path.lineTo((float)(to_x-radius*cos(lineangle - (anglerad / 2.0))),
+            (float)(to_y-radius*sin(lineangle - (anglerad / 2.0))));
+    path.lineTo((float)(to_x-radius*cos(lineangle + (anglerad / 2.0))),
+            (float)(to_y-radius*sin(lineangle + (anglerad / 2.0))));
+    path.close();
+
+    canvas.drawPath(path, paint);
+  }
+
 }
+

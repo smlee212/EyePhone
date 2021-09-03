@@ -138,7 +138,7 @@ public abstract class CameraActivity extends AppCompatActivity
   private static final String ASSET_PATH = "";
   private boolean debug = false;
   protected int defaultModelIndex = 0;
-  protected int defaultDeviceIndex = 0;
+  protected int defaultDeviceIndex = 1;
   ArrayList<String> deviceStrings = new ArrayList<String>();
   /** Current indices of device and model. */
   int currentDevice = -1;
@@ -214,13 +214,13 @@ public abstract class CameraActivity extends AppCompatActivity
     deviceView.setAdapter(deviceAdapter);
     deviceView.setItemChecked(defaultDeviceIndex, true);
     currentDevice = defaultDeviceIndex;
-    deviceView.setOnItemClickListener(
-            new AdapterView.OnItemClickListener() {
-              @Override
-              public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                updateActiveModel();
-              }
-            });
+//    deviceView.setOnItemClickListener(
+//            new AdapterView.OnItemClickListener() {
+//              @Override
+//              public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                updateActiveModel();
+//              }
+//            });
 
     // modelView 꾸미기
     modelView = findViewById((R.id.model_list));
