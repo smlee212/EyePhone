@@ -27,7 +27,7 @@ public class DetectedObj {
 
 
     // 추적 함수
-    public void traceObj(Object[] obj, float time){
+    public void traceObj(DetectedObj[] obj, float time){
         double minDist = 10000.0;
         int idx = -1;
         boolean isDetected = false;
@@ -59,7 +59,7 @@ public class DetectedObj {
         // 최근 정보 갱신 작업
         totalTime += time;
         Time.add(time);
-        if(totalTime >= TH_TIME) { // TH_TIME은 최근 2초(와 같은 임계값)
+        if(totalTime >= 0) { // TH_TIME은 최근 2초(와 같은 임계값)
             float fronttTime = Time.get(0); // 첫번째 값 반환
             Time.remove(0); // 첫번째 값 pop
             if(totalTime == fronttTime){ // 만약 최근에 감지되었을 때와의 시간 간격이 전부였다면
@@ -74,7 +74,7 @@ public class DetectedObj {
         // 검출된 동일한 클래스가 없을 경우
         if(isDetected == false) {
             notDetectedTime += time;
-            if(notDetectedTime >= TH_TIME) { // TH_TIME은 최근 2초(와 같은 임계값)
+            if(notDetectedTime >= 0) { // TH_TIME은 최근 2초(와 같은 임계값)
                 // 임계 시간동안 검출되지 않았으므로 전역 리스트에서 제거해줘야 한다.
                 newItem = true; // 이를 통해 추후에 걸러낼 수 있다.
             }

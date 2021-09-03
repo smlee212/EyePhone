@@ -81,6 +81,7 @@ import org.tensorflow.lite.examples.classification.env.Logger;
 import org.tensorflow.lite.examples.classification.tflite.Classifier_Midas.Device;
 import org.tensorflow.lite.examples.classification.tflite.Classifier_Midas.Model;
 import org.tensorflow.lite.examples.classification.tflite.Classifier_Midas.Recognition;
+import org.tensorflow.lite.examples.classification.tflite.Classifier_Yolo;
 
 public abstract class CameraActivity extends AppCompatActivity
     implements OnImageAvailableListener,
@@ -148,6 +149,8 @@ public abstract class CameraActivity extends AppCompatActivity
 
   /** 진동 변수 생성 **/
   protected Vibrator vibrator;
+
+  ArrayList<Classifier_Yolo.Recognition> li = new ArrayList<>();
 
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
@@ -439,7 +442,14 @@ public abstract class CameraActivity extends AppCompatActivity
             }
           };
 
-      processImage();
+      if(processImage()){
+        Log.d("size",""+li.size());
+
+        li.clear();
+      }
+      else{
+        //Log.d("size",""+li.size());
+      }
     } catch (final Exception e) {
       LOGGER.e(e, "Exception!");
       Trace.endSection();
@@ -800,7 +810,7 @@ public abstract class CameraActivity extends AppCompatActivity
     }
   }
 
-  protected abstract void processImage();
+  protected abstract boolean processImage();
 
   protected abstract void onPreviewSizeChosen(final Size size, final int rotation);
 

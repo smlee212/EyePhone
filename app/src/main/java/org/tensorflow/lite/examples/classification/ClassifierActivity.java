@@ -204,7 +204,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
 
   // 추론 및 알고리즘 동작
   @Override
-  protected void processImage() {
+  protected boolean processImage() {
     ++timestamp;
     final long currTimestamp = timestamp;
     trackingOverlay.postInvalidate();
@@ -212,7 +212,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
     // No mutex needed as this method is not reentrant.
     if (computingDetection) {
       readyForNextImage();
-      return;
+      return false;
     }
     computingDetection = true;
 
@@ -284,6 +284,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                 final RectF location = result.getLocation();
 
                 if (location != null && result.getConfidence() >= minimumConfidence) {
+                  li.add(result);
                   canvas.drawRect(location, paint);
                   cropToFrameTransform.mapRect(location);
                   result.setLocation(location);
@@ -316,6 +317,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
             readyForNextImage();
           }
         });
+    return true;
   }
 
   @Override
