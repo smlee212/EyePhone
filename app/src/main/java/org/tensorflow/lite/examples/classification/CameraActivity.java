@@ -40,6 +40,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.SystemClock;
 import android.os.Trace;
 import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
@@ -151,6 +152,7 @@ public abstract class CameraActivity extends AppCompatActivity
   protected Vibrator vibrator;
 
   ArrayList<DetectedObj> valid_objects = new ArrayList<>();
+  protected int idCnt = 0;
 
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
@@ -444,12 +446,15 @@ public abstract class CameraActivity extends AppCompatActivity
 
       if(processImage())
       {
-        Log.d("valid_objects",""+valid_objects.size());
+        //Log.d("valid_objects",""+valid_objects.size());
+        final long t = SystemClock.uptimeMillis();
         for (DetectedObj item : valid_objects)
         {
-          item.showInfo();
+          item.showInfo(t);
         }
-        valid_objects.clear();
+        if(valid_objects.size() >= 20) {
+          valid_objects.clear();
+        }
       }
       else{
         //Log.d("size",""+li.size());

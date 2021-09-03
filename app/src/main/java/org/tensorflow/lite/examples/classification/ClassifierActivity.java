@@ -277,7 +277,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                   float disparity = 0.20f * midas_val - 20.0f;
                   float distance = 119.975f * 1397.f / disparity;//baseline * focal_length / disp
                   float distance_m = distance/1000.f;
-                  Log.d("midas", "x, y = ("+depth_x+", "+depth_y+"), val="+midas_val+", dist "+distance_m+"(m)" );
+                  //Log.d("midas", "x, y = ("+depth_x+", "+depth_y+"), val="+midas_val+", dist "+distance_m+"(m)" );
 
                   // 사각형 그리기?
                   canvas.drawRect(location, paint);
@@ -300,31 +300,32 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                 }
               }
 
+              for (DetectedObj obj: valid_objects)
+              {
+                // 기존 객체와 매칭하는 부분
+                obj.traceObj(temp_objects);
+              }
 
-
-//              for (DetectedObj obj: valid_objects)
-//              {
-//                // 기존 객체와 매칭하는 부분
-//                obj.traceObj(temp_objects);
-//              }
+              for(int i=0;i<valid_objects.size();i++)
+              {
+                DetectedObj obj = valid_objects.get(i);
+                if (!obj.refresh(currentTime))
+                {
+                  valid_objects.remove(obj);
+                  i--;
+                }
+              }
 
               for (DetectedObj temp : temp_objects)
               {
                 // 매칭되지 않은 새로운 객체를 전역리스트에 추가
                 if (temp.getState() == 0)
                 {
+                  temp.setId(idCnt++);
                   valid_objects.add(temp);
                 }
               }
 
-//              for (DetectedObj obj: valid_objects)
-//              {
-                // 시간 지난 obj
-                //if (obj.isNewItem())
-                //{
-//                  valid_objects.remove(obj);
-//                }
-//              }
 
 
               tracker.trackResults(mappedRecognitions, currTimestamp);
@@ -352,10 +353,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
 
               /////////////////////////////////////////////////////////
 
-
-
               computingDetection = false;
-
               lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
 
               runOnUiThread(
