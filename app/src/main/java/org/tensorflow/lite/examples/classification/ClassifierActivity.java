@@ -367,6 +367,19 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                 }
               }
 
+              for (DetectedObj obj: valid_objects)
+              {
+                for (Classifier_Yolo.Recognition R: mappedRecognitions)
+                {
+                  // 기존 객체와 매칭하는 부분
+                  if (obj.getX() == R.getLocation().centerX() && obj.getY() == R.getLocation().centerY() ){
+                    R.setDxDy(obj.getDx(), obj.getDy());
+                    break;
+                  }
+                }
+              }
+
+
 
 
               tracker.trackResults(mappedRecognitions, currTimestamp);

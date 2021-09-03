@@ -167,7 +167,7 @@ public class MultiBoxTracker {
       // 화살표그리기
       boxPaint.setStrokeWidth(8.f);
       drawArrow(boxPaint, canvas, trackedPos.centerX(), trackedPos.centerY(),
-              trackedPos.centerX()+200, trackedPos.centerY()+ 150);
+              trackedPos.centerX()+recognition.dx*4, trackedPos.centerY()+recognition.dy *4);
     }
   }
 
@@ -212,6 +212,8 @@ public class MultiBoxTracker {
       trackedRecognition.location = new RectF(potential.second.getLocation());
       trackedRecognition.title = potential.second.getTitle();
       trackedRecognition.distance = potential.second.getDistance();
+      trackedRecognition.dx = potential.second.getDx();
+      trackedRecognition.dy = potential.second.getDy();
       //trackedRecognition.title = "hello world!";
 //      trackedRecognition.color = COLORS[trackedObjects.size() % COLORS.length];
       trackedRecognition.color = COLORS[potential.second.getDetectedClass() % COLORS.length];
@@ -227,6 +229,7 @@ public class MultiBoxTracker {
     RectF location;
     float detectionConfidence;
     float distance;
+    float dx, dy;
     int color;
     String title;
   }

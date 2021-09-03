@@ -43,6 +43,7 @@ public interface Classifier_Yolo {
      */
     public class Recognition {
         private Float distance;
+        private Float dx, dy;
         /**
          * A unique identifier for what has been recognized. Specific to the class, not the instance of
          * the object.
@@ -84,7 +85,13 @@ public interface Classifier_Yolo {
 
         public void setDistance(float distance) { this.distance = distance; }
 
+        public void setDxDy(float dx, float dy) { this.dx = dx; this.dy = dy;}
+
         public float getDistance(){ return distance; }
+
+        public float getDx(){ return dx; }
+
+        public float getDy(){ return dy; }
 
         public String getId() {
             return id;
