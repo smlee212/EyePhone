@@ -164,10 +164,12 @@ public class MultiBoxTracker {
               canvas, trackedPos.left + cornerSize, trackedPos.top, labelString + "%", boxPaint);
       final String labelDistance = String.format("%.2f(m)", recognition.distance);
       borderedText.drawText(canvas, trackedPos.left + cornerSize, trackedPos.top+50.f, labelDistance, boxPaint);
-      // 화살표그리기
+      ////// -> //////
+      // 화살표그리기 //
+      ////// <- //////
       boxPaint.setStrokeWidth(8.f);
       drawArrow(boxPaint, canvas, trackedPos.centerX(), trackedPos.centerY(),
-              trackedPos.centerX()+recognition.dx*4, trackedPos.centerY()+recognition.dy *4);
+              trackedPos.centerX()+recognition.dx, trackedPos.centerY()+recognition.dy);
     }
   }
 

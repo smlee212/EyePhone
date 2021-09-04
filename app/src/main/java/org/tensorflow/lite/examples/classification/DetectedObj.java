@@ -31,7 +31,6 @@ public class DetectedObj {
     //private float notDetectedTime = 0; // 객체가 연속적으로 검출되지 않은 시간
 
 
-
     // 추적 함수
     public void traceObj(ArrayList<DetectedObj> obj){
         double minDist = 10000.0;
@@ -85,37 +84,38 @@ public class DetectedObj {
         }
     }
 
-
     public boolean refresh(long time){
         // 새롭게 추가된 객체일 경우
         if(state == 0) {
             return true;
         }
 
-        float fronttTime = Time.get(0); // 첫번째 값 반환
-        float totalTime = time - fronttTime;
+        //float fronttTime = Time.get(0); // 첫번째 값 반환
+        float totalTime = time - Time.get(0);
 
-        // 최근 정보 갱신 작업
-        if(totalTime >= 2000) { // TH_TIME은 최근 2초(와 같은 임계값)
-            if(ALSize > 1) {
+        // 최근 정보 갱신 작업 (임계 시간을 넘긴 경우 과거 정보 제거)
+        while(totalTime >= 2000) { // TH_TIME은 최근 2초(와 같은 임계값)
+            if(ALSize > 1)
+            {
                 Time.remove(0); // 첫번째 값 pop
                 xPos.remove(0);
                 yPos.remove(0);
                 depth.remove(0);
                 ALSize--;
-                Time.add(time);
             }
-            else{
+            else // 객체가 마지막으로 검출된 후 임계 시간이 자났기에 return 후 제거시켜준다.
+            {
                 return false;
             }
+            totalTime = time - Time.get(0);
         }
         Time.add(time);
         return true;
     }
 
     public void showInfo(long t){
-        Log.d("obj", "\t\tclass : "+className+" (id:"+id+",state:"+state+", size:"+ALSize+")"
-                                        +" - location=("+xPos.get(ALSize-1)+","+yPos.get(ALSize-1)+")"
+        Log.d("obj", "\t\tclass : "+String.format("%20s",className)+"(id:"+id+",state:"+state+", size:"+ALSize+") "
+                                        +" - (x,y)=("+xPos.get(ALSize-1)+","+yPos.get(ALSize-1)+")"
                                         +", (dx,dy)=("+dx+","+dy+")"
                                         +", time="+(t-Time.get(0))+"ms");
     }
@@ -151,21 +151,13 @@ public class DetectedObj {
 
     public float getD() { return depth.get(ALSize-1); }
 
-    public float getDx() {
-        return dx;
-    }
+    public float getDx() { return dx; }
 
-    public float getDy() {
-        return dy;
-    }
+    public float getDy() { return dy; }
 
-    public int getState() {
-        return state;
-    }
+    public int getState() { return state; }
 
-    public String getInfo(){
-        return "id: "+id+", className: "+className+", pos: ("+xPos+", "+yPos+"), distance: "+depth;
-    }
+    public String getInfo(){ return "id: "+id+", className: "+className+", pos: ("+xPos+", "+yPos+"), distance: "+depth; }
 
     public int getALSize() {return ALSize; }
 
