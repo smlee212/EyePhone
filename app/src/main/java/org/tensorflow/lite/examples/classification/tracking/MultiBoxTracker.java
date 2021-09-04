@@ -169,7 +169,7 @@ public class MultiBoxTracker {
       ////// <- //////
       boxPaint.setStrokeWidth(8.f);
       drawArrow(boxPaint, canvas, trackedPos.centerX(), trackedPos.centerY(),
-              trackedPos.centerX()+recognition.dx, trackedPos.centerY()+recognition.dy);
+              trackedPos.centerX()-recognition.dy*1, trackedPos.centerY()+recognition.dx*1); //
     }
   }
 
