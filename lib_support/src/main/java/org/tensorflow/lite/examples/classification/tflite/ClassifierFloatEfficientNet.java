@@ -54,8 +54,8 @@ public class ClassifierFloatEfficientNet extends Classifier_Midas {
     // downloaded into assets.
     //return "efficientnet-lite0-fp32.tflite";
 
-    return "model0.tflite";
-    //return "model_opt.tflite";
+    //return "model0.tflite";
+    return "MidasModel.tflite";
   }
 
   @Override
