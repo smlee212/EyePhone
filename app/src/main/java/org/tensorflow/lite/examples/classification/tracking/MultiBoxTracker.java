@@ -140,6 +140,24 @@ public class MultiBoxTracker {
                     (int) (multiplier * (rotated ? frameWidth : frameHeight)),
                     sensorOrientation,
                     false);
+
+    Paint paint_c=new Paint();
+    paint_c.setColor(Color.RED);
+    paint_c.setStrokeWidth(5);
+    paint_c.setStyle(Paint.Style.STROKE);
+    //canvas.drawCircle(240f*(1080f/480f), (int)(640f)*(1080f/480f),(int)(240f)*(1080f/480f),paint_c);
+    RectF rect_c = new RectF(0f*(1080f/480f), (640f-240f)*(1080f/480f), 480f*(1080f/480f), (640f+240f)*(1080f/480f));
+
+    canvas.drawArc(rect_c, 180, 180,true, paint_c);
+
+    Paint paint_l = new Paint();
+    paint_l.setColor(Color.BLUE);
+    paint_l.setStrokeWidth(10);
+    canvas.drawLine(0, (480+80)*(1080f/480f), 480*(1080f/480f), (480+80)*(1080f/480f), paint_l);
+    canvas.drawLine(0, (0+80)*(1080f/480f), 480*(1080f/480f), (0+80)*(1080f/480f), paint_l);
+
+
+
     for (final TrackedRecognition recognition : trackedObjects) {
       final RectF trackedPos = new RectF(recognition.location);
 

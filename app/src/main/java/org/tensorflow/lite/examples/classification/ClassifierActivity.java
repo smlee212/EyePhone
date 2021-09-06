@@ -382,33 +382,38 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                 }
               }
 
+              if (valid_objects.size()>0){
+                for (DetectedObj obj: valid_objects) {
+                  // tts 음성 안내 부분
+                  tts.setPitch(0.9f);
+                  tts.setSpeechRate(1.2f);
+                  if (is_in_roi(obj.getX(), obj.getY()) && true && obj.notice_Cnt < 1) {
+                    //조건, (ROI 내부 && 사용자 방향으로 접근 && 고유객체당 2번)
+                    obj.notice_Cnt++;
+                    String direction = "좌측";
+                    String class_name = obj.getClassName();
+                    tts.speak(direction+" "+class_name+" 접근", TextToSpeech.QUEUE_ADD, null);
 
-
-
-              tracker.trackResults(mappedRecognitions, currTimestamp);
-              trackingOverlay.postInvalidate();
-              /////////////////////////////////////////////////////////
-
-              /*
-              // tts 음성 출력 Demo
-              int objCnt = results.size();
-              if(objCnt >= 1) {
-                tts.setPitch(1.5f);
-                tts.setSpeechRate(1.5f);
-                // editText에 있는 문장을 읽는다.
-                tts.speak(""+objCnt, TextToSpeech.QUEUE_ADD, null);
-                //vibrator.cancel();
-                //vibrator.vibrate(500); // 0.5초간 진동
+                    //vibrator.cancel();
+                    //vibrator.vibrate(500); // 0.5초간 진동
+                  }
+                }
               }
-               */
-
+              /////////////////////////////////////////////////////////
               /** TTS.setPitch(float pitch) : 음성 톤 높이 설정 (배수 설정)
                *  TTS.setSpeechRate(float speechRate) : 읽는 속도 설정 (배수 설정)
                *
                *  TextToSpeech.QUEUE_FLUSH : 진행중인 음성 출력을 끊고 이번 TTS의 음성 출력을 한다.
                *  TextToSpeech.QUEUE_ADD   : 진행중인 음성 출력이 끝난 후에 이번 TTS의 음성 출력을 진행한다. */
-
               /////////////////////////////////////////////////////////
+
+
+
+
+
+              tracker.trackResults(mappedRecognitions, currTimestamp);
+              trackingOverlay.postInvalidate();
+
 
               computingDetection = false;
               lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
@@ -578,4 +583,13 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
   //protected void setNumThreads(final int numThreads) {
   //  runInBackground(() -> detector.setNumThreads(numThreads));
   //}
+
+  private boolean is_in_roi(float x, float y)
+  {
+    float distance = (float)Math.sqrt((x-240)*(x-240) + (y-560)*(y-560));
+
+    if (distance <= 240.f) return true;
+    else return false;
+  }
+
 }

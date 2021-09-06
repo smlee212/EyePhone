@@ -7,6 +7,7 @@ public class DetectedObj {
     private String className; // 객체 종류
     private int id = -1; // 객체 고유 번호
 
+
     private int ALSize = 0;
     private ArrayList<Float> xPos = new ArrayList<>(); // 위치 좌표 x (이미지 상에서는 y로 쓰임)
     private ArrayList<Float> yPos = new ArrayList<>(); // 위치 좌표 y (이미지 상에서는 x로 쓰임)
@@ -25,6 +26,7 @@ public class DetectedObj {
     private ArrayList<Long> Time = new ArrayList<>(); // 프레임 간격 시간들 모음
     //private float totalTime = 0; // 정보 갱신을 위한 총 시간 (임계값보다 클 경우 갱신해주는 용도)
     //private float notDetectedTime = 0; // 객체가 연속적으로 검출되지 않은 시간
+    public int notice_Cnt = 0;
 
 
     // 추적 함수
