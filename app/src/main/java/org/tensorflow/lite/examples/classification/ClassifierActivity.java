@@ -335,6 +335,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                           result.getLocation().centerX(),
                           result.getLocation().centerY(),
                           distance_m,
+                          result.getLocation().height() / 2,
                           currentTime);
 
                   temp_objects.add(temp_obj);
@@ -351,7 +352,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
               for(int i=0;i<valid_objects.size();i++)
               {
                 DetectedObj obj = valid_objects.get(i);
-                if (!obj.refresh())
+                if (!obj.refresh(currentTime))
                 {
                   // 기존 객체를 갱신 후 필요없는 객체는 제거
                   valid_objects.remove(obj);

@@ -8,10 +8,11 @@ public class DetectedObj {
     private int id = -1; // 객체 고유 번호
 
     private int ALSize = 0;
-    private ArrayList<Float> xPos = new ArrayList<>(); // 위치 좌표 x
-    private ArrayList<Float> yPos = new ArrayList<>(); // 위치 좌표 y
+    private ArrayList<Float> xPos = new ArrayList<>(); // 위치 좌표 x (이미지 상에서는 y로 쓰임)
+    private ArrayList<Float> yPos = new ArrayList<>(); // 위치 좌표 y (이미지 상에서는 x로 쓰임)
     private ArrayList<Float> depth = new ArrayList<>(); // 객체와의 거리
 
+    private float h = 0; // 위치 좌표로부터 중심점까지의 거리
     private float dx = 0; // 방향 벡터 dx
     private float dy = 0; // 방향 벡터 dy
 
@@ -79,19 +80,20 @@ public class DetectedObj {
             xPos.add(tx);
             yPos.add(ty);
             depth.add(td);
+            h = temp.getH();
             Time.add(time);
             ALSize++;
         }
     }
 
-    public boolean refresh(){
+    public boolean refresh(long currentTime){
         // 새롭게 추가된 객체일 경우
         if(state == 0) {
             return true;
         }
 
         //float fronttTime = Time.get(0); // 첫번째 값 반환
-        float totalTime = Time.get(ALSize-1) - Time.get(0);
+        float totalTime = currentTime - Time.get(0);
 
         // 최근 정보 갱신 작업 (임계 시간을 넘긴 경우 과거 정보 제거)
         while(totalTime >= 2000) {
@@ -107,25 +109,26 @@ public class DetectedObj {
             {
                 return false;
             }
-            totalTime = Time.get(ALSize-1) - Time.get(0);
+            totalTime = currentTime - Time.get(0);
         }
         return true;
     }
 
     public void showInfo(long t){
         Log.d("obj", "\t\tclass : "+String.format("%20s",className)+"(id:"+id+",state:"+state+", size:"+ALSize+") "
-                                        +" - (x,y)=("+xPos.get(ALSize-1)+","+yPos.get(ALSize-1)+")"
-                                        +", (dx,dy)=("+dx+","+dy+")"
-                                        +", time="+(t-Time.get(0))+"ms");
+                                        +" - (x,y)=("+yPos.get(ALSize-1)+","+xPos.get(ALSize-1)+")"
+                                        +", (dx,dy)=("+dy+","+dx+")"
+                                        +", time="+(t-Time.get(0))+"ms"+", h="+h);
     }
 
     //////////////////////////////////////////////////////////////////////////////////
 
-    public DetectedObj(String className, float x, float y, float d, long t) {
+    public DetectedObj(String className, float x, float y, float d, float h, long t) {
         this.className = className;
         this.xPos.add(x);
         this.yPos.add(y);
         this.depth.add(d);
+        this.h = h;
         this.Time.add(t);
         ALSize = 1;
     }
@@ -153,6 +156,8 @@ public class DetectedObj {
     public float getDx() { return dx; }
 
     public float getDy() { return dy; }
+
+    public float getH() { return h; }
 
     public int getState() { return state; }
 
