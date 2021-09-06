@@ -309,7 +309,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                   }
                   float avg_val = sum_val/3f;
 
-                  float disparity = 0.20f * avg_val - 20.0f;
+                  float disparity = 0.144f * avg_val - 13.0f;
                   float distance;
                   if (disparity >= 0) {
                     distance = 119.975f * 1397.f / disparity;//baseline * focal_length / disp;
@@ -387,7 +387,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                   // tts 음성 안내 부분
                   tts.setPitch(0.9f);
                   tts.setSpeechRate(1.2f);
-                  if (is_in_roi(obj.getY(), obj.getX() + obj.getH()) && (obj.getY() <= 240 && obj.getDy() < 0) || (obj.getY() > 240 && obj.getDy() >= 0)) {
+                  if (is_in_roi(obj.getY(), obj.getX() + obj.getH()) && ((obj.getY() <= 240 && obj.getDy() < -2) || (obj.getY() > 240 && obj.getDy() >= +2))) {
                     // 조건, (ROI 내부 && 사용자 방향으로 접근 && 고유객체당 2번)
                     //if (obj.notice_Cnt != 0 && (currentTime - obj.last_notice_time) < 3000) {
                     if (obj.notice && (currentTime - obj.last_notice_time) < 3000) {
