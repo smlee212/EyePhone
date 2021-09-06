@@ -34,20 +34,36 @@
             android:background="@android:color/black"
             tools:context="org.tensorflow.lite.examples.classification.CameraActivity" />
 
-        <!--
-                <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    android:layout_alignParentTop="true"
-                    android:background="@color/tfe_semi_transparent">
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_alignParentTop="true"
+                android:background="@color/tfe_semi_transparent">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/tfl2_logo" />
-                </androidx.appcompat.widget.Toolbar>
-        -->
+                <ImageView
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/eyephone" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="50dp"
+                    android:text="Inference Time"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/tv_inference"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="right"
+                    android:paddingRight="20dp"
+                    android:text="640*480"
+                    android:textColor="@android:color/white" />
+            </androidx.appcompat.widget.Toolbar>
 
     </RelativeLayout>
 

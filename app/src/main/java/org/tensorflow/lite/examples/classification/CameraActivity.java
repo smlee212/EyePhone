@@ -110,7 +110,8 @@ public abstract class CameraActivity extends AppCompatActivity
   protected TextView frameValueTextView,
           cropValueTextView,
           inferenceTimeTextView,
-          threadsTextView;
+          threadsTextView,
+          inferenceTime_tv;
   protected ImageView bottomSheetArrowImageView;
   private ImageView plusImageView, minusImageView;
 
@@ -186,6 +187,8 @@ public abstract class CameraActivity extends AppCompatActivity
     vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
     ///////////////////////////////////////////////////////////////////////////////
+
+    inferenceTime_tv = findViewById(R.id.tv_inference);
 
     threadsTextView = findViewById(R.id.threads);
     plusImageView = findViewById(R.id.plus);
@@ -777,6 +780,7 @@ public abstract class CameraActivity extends AppCompatActivity
 
   protected void showInference(String inferenceTime) {
     inferenceTimeTextView.setText(inferenceTime);
+    inferenceTime_tv.setText(inferenceTime);
   }
 
   protected Model getModel() {
