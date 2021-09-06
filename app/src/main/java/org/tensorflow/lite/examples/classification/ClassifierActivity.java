@@ -335,7 +335,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                           result.getLocation().centerX(),
                           result.getLocation().centerY(),
                           distance_m,
-                          result.getLocation().height() / 2,
+                          result.getLocation().width() / 2,
                           currentTime);
 
                   temp_objects.add(temp_obj);
@@ -387,8 +387,9 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                   // tts 음성 안내 부분
                   tts.setPitch(0.9f);
                   tts.setSpeechRate(1.2f);
-                  if (is_in_roi(obj.getX(), obj.getY()) && true && obj.notice_Cnt < 1) {
+                  if (is_in_roi(obj.getY(), obj.getX() + obj.getH()) && true && obj.notice_Cnt < 1) {
                     //조건, (ROI 내부 && 사용자 방향으로 접근 && 고유객체당 2번)
+                    Log.d("isinroi","x,y=("+obj.getY()+","+(obj.getX()+obj.getH())+")");
                     obj.notice_Cnt++;
                     String direction = "좌측";
                     String class_name = obj.getClassName();
@@ -586,8 +587,9 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
 
   private boolean is_in_roi(float x, float y)
   {
-    float distance = (float)Math.sqrt((x-240)*(x-240) + (y-560)*(y-560));
+    float distance = (float)Math.sqrt((x-240)*(x-240) + (y-560-80)*(y-560-80));
 
+    Log.d("roi", "(x,y) = ("+x+","+y+")"+" / distance = "+distance);
     if (distance <= 240.f) return true;
     else return false;
   }
