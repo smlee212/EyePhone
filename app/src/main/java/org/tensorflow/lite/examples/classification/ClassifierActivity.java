@@ -62,6 +62,7 @@ import android.graphics.RectF;
 import android.graphics.PixelFormat;
 import java.nio.ByteBuffer;
 
+
 public class ClassifierActivity extends CameraActivity implements OnImageAvailableListener {
   private static final Logger LOGGER = new Logger();
 
@@ -277,7 +278,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                   // midas 추론값 좌표이용해서 찾아오기
                   int centerDx = (int)(((result.getLocation().width()/4.f)/480.f) * 256);
                   int centerDy = (int)(((result.getLocation().height()/4.f)/480.f) * 256);
-                  int[] dx = {0, 0, centerDx, 0, -centerDx}; //중심, 북, 동, 남, 서
+                  int[] dx = {0, 0, centerDx, 0, -centerDx}; // 중심, 북, 동, 남, 서
                   int[] dy = {0, -centerDy, 0, centerDy, 0};
                   //깊이값 단일 추론.
                   //float midas_val = img_array[(256 - depth_x - 1) + (256 - depth_y - 1) * 256];
@@ -344,14 +345,15 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
               for (DetectedObj obj: valid_objects)
               {
                 // 기존 객체와 매칭하는 부분
-                obj.traceObj(temp_objects);
+                obj.traceObj(temp_objects,currentTime);
               }
 
               for(int i=0;i<valid_objects.size();i++)
               {
                 DetectedObj obj = valid_objects.get(i);
-                if (!obj.refresh(currentTime))
+                if (!obj.refresh())
                 {
+                  // 기존 객체를 갱신 후 필요없는 객체는 제거
                   valid_objects.remove(obj);
                   i--;
                 }
@@ -371,7 +373,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
               {
                 for (Classifier_Yolo.Recognition R: mappedRecognitions)
                 {
-                  // 기존 객체와 매칭하는 부분
+                  // 기존 객체와 사각형 객체를 매칭하여 벡터 정보 넘겨줌
                   if (obj.getX() == R.getLocation().centerX() && obj.getY() == R.getLocation().centerY() ){
                     R.setDxDy(obj.getDx(), obj.getDy());
                     break;

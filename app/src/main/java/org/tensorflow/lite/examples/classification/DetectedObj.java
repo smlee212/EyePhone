@@ -8,15 +8,10 @@ public class DetectedObj {
     private int id = -1; // 객체 고유 번호
 
     private int ALSize = 0;
-    // 해당 변수들은 ArrayList<Float>로 변환하여
-    // 검출된 프레임마다 정보를 저장해야한다.
-    // 현재 간단한 구현을 위해 단일 변수로 설정한 것이므로 추후에 ArrayList로 변경해주어야 함
     private ArrayList<Float> xPos = new ArrayList<>(); // 위치 좌표 x
     private ArrayList<Float> yPos = new ArrayList<>(); // 위치 좌표 y
     private ArrayList<Float> depth = new ArrayList<>(); // 객체와의 거리
 
-    // 이 또한 ArrayList로 변경해서 사용해야 함
-    // 하지만 위의 정보들과는 List의 크기가 1개 작은것을 인지해야함
     private float dx = 0; // 방향 벡터 dx
     private float dy = 0; // 방향 벡터 dy
 
@@ -32,7 +27,7 @@ public class DetectedObj {
 
 
     // 추적 함수
-    public void traceObj(ArrayList<DetectedObj> obj){
+    public void traceObj(ArrayList<DetectedObj> obj, long time){
         double minDist = 10000.0;
         int idx = -1;
         boolean isDetected = false;
@@ -76,25 +71,30 @@ public class DetectedObj {
             float ty = temp.getY();
             float td = temp.getD();
             dx = tx - xPos.get(ALSize-1);
+            dx /= time - Time.get(ALSize-1);
+            dx *= 300;
             dy = ty - yPos.get(ALSize-1);
+            dy /= time - Time.get(ALSize-1);
+            dy *= 300;
             xPos.add(tx);
             yPos.add(ty);
             depth.add(td);
+            Time.add(time);
             ALSize++;
         }
     }
 
-    public boolean refresh(long time){
+    public boolean refresh(){
         // 새롭게 추가된 객체일 경우
         if(state == 0) {
             return true;
         }
 
         //float fronttTime = Time.get(0); // 첫번째 값 반환
-        float totalTime = time - Time.get(0);
+        float totalTime = Time.get(ALSize-1) - Time.get(0);
 
         // 최근 정보 갱신 작업 (임계 시간을 넘긴 경우 과거 정보 제거)
-        while(totalTime >= 2000) { // TH_TIME은 최근 2초(와 같은 임계값)
+        while(totalTime >= 2000) {
             if(ALSize > 1)
             {
                 Time.remove(0); // 첫번째 값 pop
@@ -107,9 +107,8 @@ public class DetectedObj {
             {
                 return false;
             }
-            totalTime = time - Time.get(0);
+            totalTime = Time.get(ALSize-1) - Time.get(0);
         }
-        Time.add(time);
         return true;
     }
 
