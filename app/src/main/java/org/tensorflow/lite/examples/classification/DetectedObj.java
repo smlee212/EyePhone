@@ -28,6 +28,7 @@ public class DetectedObj {
     //private float totalTime = 0; // 정보 갱신을 위한 총 시간 (임계값보다 클 경우 갱신해주는 용도)
     //private float notDetectedTime = 0; // 객체가 연속적으로 검출되지 않은 시간
     public int notice_Cnt = 0;
+    public boolean notice = false;
 
 
     // 추적 함수
@@ -77,7 +78,7 @@ public class DetectedObj {
             dx = tx - xPos.get(ALSize-1);
             dx /= time - Time.get(ALSize-1);
             dx *= 300;
-            dy = ty - yPos.get(ALSize-1);
+            dy = yPos.get(ALSize-1) - ty;
             dy /= time - Time.get(ALSize-1);
             dy *= 300;
             xPos.add(tx);
@@ -119,7 +120,7 @@ public class DetectedObj {
 
     public void showInfo(long t){
         Log.d("obj", "\t\tclass : "+String.format("%20s",className)+"(id:"+id+",state:"+state+", size:"+ALSize+") "
-                                        +" - (x,y)=("+yPos.get(ALSize-1)+","+xPos.get(ALSize-1)+")"
+                                        +" - (x,y)=("+(480-yPos.get(ALSize-1))+","+xPos.get(ALSize-1)+")"
                                         +", (dx,dy)=("+dy+","+dx+")"
                                         +", time="+(t-Time.get(0))+"ms"+", h="+h);
     }

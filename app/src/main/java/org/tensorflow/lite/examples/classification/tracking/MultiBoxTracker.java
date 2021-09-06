@@ -189,7 +189,7 @@ public class MultiBoxTracker {
       //drawArrow(boxPaint, canvas, trackedPos.centerX(), trackedPos.centerY(),
       //        trackedPos.centerX()-recognition.dy*1, trackedPos.centerY()+recognition.dx*1); //
       drawArrow(boxPaint, canvas, trackedPos.centerX(), trackedPos.centerY()+trackedPos.height()/2,
-              trackedPos.centerX()-recognition.dy*1, trackedPos.centerY()+trackedPos.height()/2+recognition.dx*1); //
+              trackedPos.centerX()+recognition.dy*1, trackedPos.centerY()+trackedPos.height()/2+recognition.dx*1); //
 
     }
   }

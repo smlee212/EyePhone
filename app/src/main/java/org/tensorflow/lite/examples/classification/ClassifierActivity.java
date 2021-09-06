@@ -387,21 +387,22 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                   // tts 음성 안내 부분
                   tts.setPitch(0.9f);
                   tts.setSpeechRate(1.2f);
-                  if (is_in_roi(obj.getY(), obj.getX() + obj.getH()) && true && obj.notice_Cnt < 1) {
+                  if (is_in_roi(obj.getY(), obj.getX() + obj.getH()) && (obj.getY() <= 240 && obj.getDy() < 0) || (obj.getY() > 240 && obj.getDy() >= 0)) {
                     // 조건, (ROI 내부 && 사용자 방향으로 접근 && 고유객체당 2번)
-                    if (obj.notice_Cnt != 0 && (currentTime - obj.last_notice_time) < 3000) {
+                    //if (obj.notice_Cnt != 0 && (currentTime - obj.last_notice_time) < 3000) {
+                    if (obj.notice && (currentTime - obj.last_notice_time) < 3000) {
                       // 최근 {inverval_s}초 동안 알림했을경우 스킵.
                       continue;
                     }
+
+                    Log.d("isinroi", "x,y=(" + obj.getY() + "," + (obj.getX() + obj.getH()) + ")");
+                    //obj.notice_Cnt++;
+                    obj.notice = true;
                     obj.last_notice_time = currentTime;
 
-
-                    Log.d("isinroi","x,y=("+obj.getY()+","+(obj.getX()+obj.getH())+")");
-                    obj.notice_Cnt++;
-                    String direction = (obj.getY() > 240f)?"좌측":"우측";
-                    Log.d("obj", ""+obj.getY()+", ");
+                    String direction = (obj.getY() > 240f) ? "좌측" : "우측";
                     String class_name = obj.getClassName();
-                    tts.speak(direction+" "+class_name+" 접근", TextToSpeech.QUEUE_ADD, null);
+                    tts.speak(direction + " " + class_name, TextToSpeech.QUEUE_ADD, null);
 
                     //vibrator.cancel();
                     //vibrator.vibrate(500); // 0.5초간 진동
