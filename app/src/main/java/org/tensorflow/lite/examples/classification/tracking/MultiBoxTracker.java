@@ -186,8 +186,11 @@ public class MultiBoxTracker {
       // 화살표그리기 //
       ////// <- //////
       boxPaint.setStrokeWidth(8.f);
-      drawArrow(boxPaint, canvas, trackedPos.centerX(), trackedPos.centerY(),
-              trackedPos.centerX()-recognition.dy*1, trackedPos.centerY()+recognition.dx*1); //
+      //drawArrow(boxPaint, canvas, trackedPos.centerX(), trackedPos.centerY(),
+      //        trackedPos.centerX()-recognition.dy*1, trackedPos.centerY()+recognition.dx*1); //
+      drawArrow(boxPaint, canvas, trackedPos.centerX(), trackedPos.centerY()+trackedPos.height()/2,
+              trackedPos.centerX()-recognition.dy*1, trackedPos.centerY()+trackedPos.height()/2+recognition.dx*1); //
+
     }
   }
 

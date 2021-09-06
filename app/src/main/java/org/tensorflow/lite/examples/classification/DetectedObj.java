@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public class DetectedObj {
     private String className; // 객체 종류
     private int id = -1; // 객체 고유 번호
+    public Long last_notice_time;
 
 
     private int ALSize = 0;

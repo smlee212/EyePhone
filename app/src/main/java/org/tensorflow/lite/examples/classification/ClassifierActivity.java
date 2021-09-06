@@ -388,10 +388,18 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                   tts.setPitch(0.9f);
                   tts.setSpeechRate(1.2f);
                   if (is_in_roi(obj.getY(), obj.getX() + obj.getH()) && true && obj.notice_Cnt < 1) {
-                    //조건, (ROI 내부 && 사용자 방향으로 접근 && 고유객체당 2번)
+                    // 조건, (ROI 내부 && 사용자 방향으로 접근 && 고유객체당 2번)
+                    if (obj.notice_Cnt != 0 && (currentTime - obj.last_notice_time) < 3000) {
+                      // 최근 {inverval_s}초 동안 알림했을경우 스킵.
+                      continue;
+                    }
+                    obj.last_notice_time = currentTime;
+
+
                     Log.d("isinroi","x,y=("+obj.getY()+","+(obj.getX()+obj.getH())+")");
                     obj.notice_Cnt++;
-                    String direction = "좌측";
+                    String direction = (obj.getY() > 240f)?"좌측":"우측";
+                    Log.d("obj", ""+obj.getY()+", ");
                     String class_name = obj.getClassName();
                     tts.speak(direction+" "+class_name+" 접근", TextToSpeech.QUEUE_ADD, null);
 
