@@ -150,11 +150,11 @@ public class MultiBoxTracker {
 
     canvas.drawArc(rect_c, 180, 180,true, paint_c);
 
-    Paint paint_l = new Paint();
-    paint_l.setColor(Color.BLUE);
-    paint_l.setStrokeWidth(10);
-    canvas.drawLine(0, (480+80)*(1080f/480f), 480*(1080f/480f), (480+80)*(1080f/480f), paint_l);
-    canvas.drawLine(0, (0+80)*(1080f/480f), 480*(1080f/480f), (0+80)*(1080f/480f), paint_l);
+    //Paint paint_l = new Paint();
+    //paint_l.setColor(Color.BLUE);
+    //paint_l.setStrokeWidth(10);
+    //canvas.drawLine(0, (480+80)*(1080f/480f), 480*(1080f/480f), (480+80)*(1080f/480f), paint_l);
+    //canvas.drawLine(0, (0+80)*(1080f/480f), 480*(1080f/480f), (0+80)*(1080f/480f), paint_l);
 
 
 

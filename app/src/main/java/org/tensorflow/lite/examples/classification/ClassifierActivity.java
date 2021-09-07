@@ -68,7 +68,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
 
   private static final Size DESIRED_PREVIEW_SIZE = new Size(640, 480);
   private static final float TEXT_SIZE_DIP = 10;
-  public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.3f; // 물체 인식 확률 TH
+  public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f; // 물체 인식 확률 TH
 
   private Bitmap rgbFrameBitmap = null;
   private long lastProcessingTimeMs;
