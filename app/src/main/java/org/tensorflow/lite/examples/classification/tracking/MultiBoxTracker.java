@@ -23,6 +23,7 @@ import static java.lang.Math.sin;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Matrix;
 import android.graphics.Path;
 import android.graphics.Paint;
@@ -43,11 +44,11 @@ import org.tensorflow.lite.examples.classification.tflite.Classifier_Yolo.Recogn
 
 /** A tracker that handles non-max suppression and matches existing objects to new detections. */
 public class MultiBoxTracker {
-  private static final float TEXT_SIZE_DIP = 18;
+  private static final float TEXT_SIZE_DIP = 15;
   private static final float MIN_SIZE = 16.0f;
   private static final int[] COLORS = {
           Color.BLUE,
-          Color.RED,
+          //Color.RED,
           Color.GREEN,
           Color.YELLOW,
           Color.CYAN,
@@ -164,24 +165,54 @@ public class MultiBoxTracker {
       getFrameToCanvasMatrix().mapRect(trackedPos);
       boxPaint.setColor(recognition.color);
       boxPaint.setStrokeWidth(5.f);
-      boxPaint.setTextSize(1.f);
+      boxPaint.setTextSize(50f);
+      // 점선
+      DashPathEffect dashPath = new DashPathEffect(new float[]{15,15}, 2);
+      boxPaint.setPathEffect(dashPath);
 
       float cornerSize = Math.min(trackedPos.width(), trackedPos.height()) / 25.0f;
       canvas.drawRoundRect(trackedPos, cornerSize, cornerSize, boxPaint);
 
+      boxPaint.setPathEffect(null);
+
+      String rangeDistance;
+      if (recognition.distance < 3) {
+        rangeDistance = "1~3[m]";
+        RectF tempRectF = new RectF(trackedPos);
+        tempRectF.set(trackedPos.left-10, trackedPos.top-10, trackedPos.right+10, trackedPos.bottom+10);
+        Paint tempPaint = new Paint(boxPaint);
+        tempPaint.setColor(Color.RED);
+        canvas.drawRoundRect(tempRectF, cornerSize, cornerSize, tempPaint);
+      }
+      else if (recognition.distance < 6) {
+        rangeDistance = "3~6[m]";
+      }
+      else if (recognition.distance < 10) {
+        rangeDistance = "6~10[m]";
+      }
+      else {
+        rangeDistance = "10[m]~";
+      }
 
 
       final String labelString =
               !TextUtils.isEmpty(recognition.title)
-                      ? String.format("%s %.2f", recognition.title, (100 * recognition.detectionConfidence))
-                      : String.format("%.2f", (100 * recognition.detectionConfidence));
+                      ? String.format("%s %s", recognition.title, rangeDistance)
+                      : String.format("%sf", rangeDistance);
+
+//      final String labelString =
+//              !TextUtils.isEmpty(recognition.title)
+//                      ? String.format("%s %.2f", recognition.title, (100 * recognition.detectionConfidence))
+//                      : String.format("%.2f", (100 * recognition.detectionConfidence));
+
       //            borderedText.drawText(canvas, trackedPos.left + cornerSize, trackedPos.top,
       // labelString);
 
+      //final String labelDistance = String.format("%.2f(m)", recognition.distance);
+
       borderedText.drawText(
-              canvas, trackedPos.left + cornerSize, trackedPos.top, labelString + "%", boxPaint);
-      final String labelDistance = String.format("%.2f(m)", recognition.distance);
-      borderedText.drawText(canvas, trackedPos.left + cornerSize, trackedPos.top+50.f, labelDistance, boxPaint);
+              canvas, trackedPos.left + cornerSize, trackedPos.top, labelString, boxPaint);
+
       ////// -> //////
       // 화살표그리기 //
       ////// <- //////
